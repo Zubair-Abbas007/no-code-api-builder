@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APIForge — No-Code API Builder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TOP NAV
+═══════════════════════════════════════════════════════════ -->
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo">
+      <span class="logo-icon">⚡</span>
+      <span class="logo-text">APIFORGE</span>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search projects..." id="searchInput" />
+      <kbd>⌘K</kbd>
+    </div>
+  </div>
+  <div class="topnav-right">
+    <button class="btn-new" id="newProjectBtn">+ New Project</button>
+    <button class="btn-templates">📋 Templates</button>
+    <div class="avatar">A</div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAIN LAYOUT
+═══════════════════════════════════════════════════════════ -->
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">MY APIS</span>
+      <span class="sidebar-count" id="apiCount">0</span>
+      <button class="sidebar-more">···</button>
+    </div>
+
+    <div class="project-list" id="projectList">
+      <!-- populated by JS -->
+    </div>
+
+    <div class="quick-templates">
+      <div class="qt-label">QUICK TEMPLATES</div>
+      <div class="qt-grid">
+        <button class="qt-btn" data-tpl="auth">🔐 Auth + JWT</button>
+        <button class="qt-btn" data-tpl="crud">🔧 CRUD REST</button>
+        <button class="qt-btn" data-tpl="payment">💳 Payment API</button>
+        <button class="qt-btn" data-tpl="chat">💬 WebSocket Chat</button>
+      </div>
+    </div>
+
+    <div class="usage-bar">
+      <div class="usage-label">
+        <span>Usage</span>
+        <span id="usageText">0 / 50 free</span>
+      </div>
+      <div class="usage-track"><div class="usage-fill" id="usageFill"></div></div>
+      <a class="upgrade-link" href="#">Upgrade Plan →</a>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="content">
+
+    <!-- Describe Panel -->
+    <section class="describe-panel">
+      <div class="panel-header">
+        <span class="panel-icon">🤖</span>
+        <span class="panel-title">Describe your API</span>
+      </div>
+
+      <textarea
+        id="apiDescription"
+        class="describe-textarea"
+        placeholder="Describe what your API should do... Example: Build a REST API for a task management app with user authentication, CRUD operations for tasks and projects, team collaboration features, and webhook notifications."
+      ></textarea>
+
+      <div class="describe-footer">
+        <span class="char-count" id="charCount">0 characters</span>
+        <button class="btn-generate" id="generateBtn">
+          <span class="gen-icon">✨</span> Generate
+        </button>
+      </div>
+
+      <!-- Tag Rows -->
+      <div class="tag-rows">
+        <div class="tag-row">
+          <span class="tag-group-label">Language</span>
+          <div class="tags" id="langTags">
+            <button class="tag active" data-group="lang" data-val="Node.js">Node.js</button>
+            <button class="tag" data-group="lang" data-val="Python">Python</button>
+            <button class="tag" data-group="lang" data-val="Go">Go</button>
+          </div>
+        </div>
+        <div class="tag-row">
+          <span class="tag-group-label">Database</span>
+          <div class="tags" id="dbTags">
+            <button class="tag" data-group="db" data-val="PostgreSQL">PostgreSQL</button>
+            <button class="tag" data-group="db" data-val="MongoDB">MongoDB</button>
+            <button class="tag" data-group="db" data-val="MySQL">MySQL</button>
+            <button class="tag" data-group="db" data-val="None">None</button>
+          </div>
+        </div>
+        <div class="tag-row">
+          <span class="tag-group-label">Auth</span>
+          <div class="tags" id="authTags">
+            <button class="tag" data-group="auth" data-val="JWT">JWT</button>
+            <button class="tag" data-group="auth" data-val="OAuth">OAuth</button>
+            <button class="tag" data-group="auth" data-val="None">None</button>
+          </div>
+        </div>
+        <div class="tag-row">
+          <span class="tag-group-label">Extras</span>
+          <div class="tags" id="extraTags">
+            <button class="tag" data-group="extras" data-val="Docker">Docker</button>
+            <button class="tag" data-group="extras" data-val="OpenAPI">OpenAPI</button>
+            <button class="tag" data-group="extras" data-val="Tests">Tests</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Code Preview Panel -->
+    <section class="code-panel" id="codePanel">
+
+      <!-- Empty state -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">📄</div>
+        <div class="empty-title">No code generated yet</div>
+        <div class="empty-sub">Describe your API above and hit Generate. Your production-ready code will appear here.</div>
+        <div class="empty-files">
+          <span class="ef-file">📄 index.js</span>
+          <span class="ef-file">📄 package.json</span>
+          <span class="ef-file">🐳 docker-compose.yml</span>
+          <span class="ef-file">📄 README.md</span>
+        </div>
+      </div>
+
+      <!-- Generated state (hidden until generate) -->
+      <div class="generated-view" id="generatedView" style="display:none">
+
+        <!-- Toolbar -->
+        <div class="code-toolbar">
+          <div class="file-tabs" id="fileTabs"></div>
+          <div class="toolbar-actions">
+            <button class="tb-btn" id="copyBtn" title="Copy code">📋 Copy</button>
+            <button class="tb-btn tb-edit" id="editBtn" title="Edit code">✏️ Edit</button>
+            <button class="tb-btn tb-download" id="downloadBtn" title="Download ZIP">⬇️ Download ZIP</button>
+            <button class="tb-btn tb-save" id="saveBtn" title="Save project" style="display:none">💾 Save</button>
+          </div>
+        </div>
+
+        <!-- Code editor area -->
+        <div class="code-area" id="codeArea">
+          <div class="line-numbers" id="lineNumbers"></div>
+          <textarea class="code-editor" id="codeEditor" spellcheck="false" readonly></textarea>
+        </div>
+
+        <!-- Project name bar -->
+        <div class="project-name-bar" id="projectNameBar">
+          <input type="text" id="projectNameInput" class="project-name-input" placeholder="Project name..." />
+          <button class="btn-save-project" id="saveProjectBtn">💾 Save to My APIs</button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LOADING OVERLAY
+═══════════════════════════════════════════════════════════ -->
+<div class="loading-overlay" id="loadingOverlay" style="display:none">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Generating your API...</div>
+    <div class="loading-sub">Building production-ready code</div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

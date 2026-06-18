@@ -1,0 +1,15 @@
+Deployment URL
+==============
+
+Live Application:
+https://no-code-api-builder.onrender.com
+
+Platform: Render.com (Free Tier)
+Service Type: Web Service (Node.js)
+Region: Oregon (US West)
+
+Note: Free tier services on Render spin down after 15 minutes of inactivity.
+      The first request after inactivity may take ~30 seconds to respond.
+
+Health Check Endpoint:
+https://no-code-api-builder.onrender.com/health
